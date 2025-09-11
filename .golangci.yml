@@ -1,0 +1,266 @@
+# This code is licensed under the terms of the MIT license.
+
+## Golden config for golangci-lint v1.52.2
+#
+# This is the best config for golangci-lint based on my experience and opinion.
+# It is very strict, but not extremely strict.
+# Feel free to adopt and change it for your needs.
+
+version: "2"
+
+run:
+  # Timeout for analysis, e.g. 30s, 5m.
+  # Default: 1m
+  timeout: 3m
+
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+
+# This file contains only configs which differ from defaults.
+# All possible options can be found here https://github.com/golangci/golangci-lint/blob/master/.golangci.reference.yml
+linters:
+  settings:
+    gosec:
+      excludes:
+        - G104
+
+    errcheck:
+      # Report about not checking of errors in type assertions: `a := b.(MyStruct)`.
+      # Such cases aren't reported by default.
+      # Default: false
+      check-type-assertions: true
+      exclude-functions:
+        - (*gin.Context).AbortWithError
+
+    exhaustive:
+      # Program elements to check for exhaustiveness.
+      # Default: [ switch ]
+      check:
+        - switch
+        - map
+      default-signifies-exhaustive: true
+
+    exhaustruct:
+      # List of regular expressions to exclude struct packages and names from check.
+      # Default: []
+      exclude:
+        # std libs
+        - "^net/http.Client$"
+        - "^net/http.Cookie$"
+        - "^net/http.Request$"
+        - "^net/http.Response$"
+        - "^net/http.Server$"
+        - "^net/http.Transport$"
+        - "^net/url.URL$"
+        - "^os/exec.Cmd$"
+        - "^reflect.StructField$"
+        # public libs
+        - "^github.com/Shopify/sarama.Config$"
+        - "^github.com/Shopify/sarama.ProducerMessage$"
+        - "^github.com/mitchellh/mapstructure.DecoderConfig$"
+        - "^github.com/prometheus/client_golang/.+Opts$"
+        - "^github.com/spf13/cobra.Command$"
+        - "^github.com/spf13/cobra.CompletionOptions$"
+        - "^github.com/stretchr/testify/mock.Mock$"
+        - "^github.com/testcontainers/testcontainers-go.+Request$"
+        - "^github.com/testcontainers/testcontainers-go.FromDockerfile$"
+        - "^golang.org/x/tools/go/analysis.Analyzer$"
+        - "^google.golang.org/protobuf/.+Options$"
+        - "^gopkg.in/yaml.v3.Node$"
+
+    funlen:
+      # Checks the number of lines in a function.
+      # If lower than 0, disable the check.
+      # Default: 60
+      lines: 100
+      # Checks the number of statements in a function.
+      # If lower than 0, disable the check.
+      # Default: 40
+      statements: 50
+
+    gocognit:
+      # Minimal code complexity to report.
+      # Default: 30 (but we recommend 10-20)
+      min-complexity: 20
+
+    gocritic:
+      # Settings passed to gocritic.
+      # The settings key is the name of a supported gocritic checker.
+      # The list of supported checkers can be find in https://go-critic.github.io/overview.
+      settings:
+        captLocal:
+          # Whether to restrict checker to params only.
+          # Default: true
+          paramsOnly: false
+        underef:
+          # Whether to skip (*x).method() calls where x is a pointer receiver.
+          # Default: true
+          skipRecvDeref: false
+
+    gomodguard:
+      blocked:
+        # List of blocked modules.
+        # Default: []
+        modules:
+          - github.com/golang/protobuf:
+              recommendations:
+                - google.golang.org/protobuf
+              reason: "see https://developers.google.com/protocol-buffers/docs/reference/go/faq#modules"
+          - github.com/satori/go.uuid:
+              recommendations:
+                - github.com/google/uuid
+              reason: "satori's package is not maintained"
+          - github.com/gofrs/uuid:
+              recommendations:
+                - github.com/google/uuid
+              reason: "gofrs' package is not go module"
+
+    govet:
+      # Enable all analyzers.
+      # Default: false
+      enable-all: true
+      # Disable analyzers by name.
+      # Run `go tool vet help` to see all analyzers.
+      # Default: []
+      disable:
+        - fieldalignment # too strict
+      # Settings per analyzer.
+      settings:
+        shadow:
+          # Whether to be strict about shadowing; can be noisy.
+          # Default: false
+          strict: true
+
+    nakedret:
+      # Make an issue if func has more lines of code than this setting, and it has naked returns.
+      # Default: 30
+      max-func-lines: 30
+
+    nolintlint:
+      # Exclude following linters from requiring an explanation.
+      # Default: []
+      allow-no-explanation: [ funlen, gocognit, lll ]
+      # Enable to require an explanation of nonzero length after each nolint directive.
+      # Default: false
+      require-explanation: true
+      # Enable to require nolint directives to mention the specific linter being suppressed.
+      # Default: false
+      require-specific: true
+
+    rowserrcheck:
+      # database/sql is always checked
+      # Default: []
+      packages:
+        - github.com/jmoiron/sqlx
+
+  enable:
+    ## enabled by default
+    - errcheck # checking for unchecked errors, these unchecked errors can be critical bugs in some cases
+    - govet # reports suspicious constructs, such as Printf calls whose arguments do not align with the format string
+    - ineffassign # detects when assignments to existing variables are not used
+    - staticcheck # is a go vet on steroids, applying a ton of static analysis checks
+    - unused # checks for unused constants, variables, functions and types
+    - asasalint # checks for pass []any as any in variadic func(...any)
+    - asciicheck # checks that your code does not contain non-ASCII identifiers
+    - bidichk # checks for dangerous unicode character sequences
+    - durationcheck # checks for two durations multiplied together
+    - errname # checks that sentinel errors are prefixed with the Err and error types are suffixed with the Error
+    - errorlint # finds code that will cause problems with the error wrapping scheme introduced in Go 1.13
+    - exhaustive # checks exhaustiveness of enum switch statements
+    - gocheckcompilerdirectives # validates go compiler directive comments (//go:)
+    - gocritic # provides diagnostics that check for bugs, performance and style issues
+    - gomodguard # allow and block lists linter for direct Go module dependencies. This is different from depguard where there are different block types for example version constraints and module recommendations
+    - goprintffuncname # checks that printf-like functions are named with f at the end
+    - gosec # inspects source code for security problems
+    - loggercheck # checks key value pairs for common logger libraries (kitlog,klog,logr,zap)
+    - makezero # finds slice declarations with non-zero initial length
+    - musttag # enforces field tags in (un)marshaled structs
+    - nakedret # finds naked returns in functions greater than a specified function length
+    - nilerr # finds the code that returns nil even if it checks that the error is not nil
+    #- noctx # finds sending http request without context.Context
+    - nolintlint # reports ill-formed or insufficient nolint directives
+    - nosprintfhostport # checks for misuse of Sprintf to construct a host with port in a URL
+    - predeclared # finds code that shadows one of Go's predeclared identifiers
+    - promlinter # checks Prometheus metrics naming via promlint
+    - reassign # checks that package variables are not reassigned
+    - revive # fast, configurable, extensible, flexible, and beautiful linter for Go, drop-in replacement of golint
+    - rowserrcheck # checks whether Err of rows is checked successfully
+    - sqlclosecheck # checks that sql.Rows and sql.Stmt are closed
+    - testableexamples # checks if examples are testable (have an expected output)
+    - tparallel # detects inappropriate usage of t.Parallel() method in your Go test codes
+    - unconvert # removes unnecessary type conversions
+    - usestdlibvars # detects the possibility to use variables/constants from the Go standard library
+    - wastedassign # finds wasted assignment statements
+    - whitespace # detects leading and trailing whitespace
+
+  exclusions:
+    rules:
+      - source: "(noinspection|TODO)"
+        linters: [ godot ]
+      - source: "c.conn.Close"
+        linters: [ errcheck ]
+      - source: "defer"
+        linters: [ errcheck ]
+      - text: 'declaration of "(err|ctx|ok)" shadows declaration at'
+        linters: [ govet ]
+      - source: "//noinspection"
+        linters: [ gocritic ]
+      - text: "fmt.Println"
+        linters: [ forbidigo ]
+      - text: "don't use underscores in Go names; (var|const|type)"
+        linters: [ stylecheck, revive ]
+      - text: "error strings"
+        linters: [ revive ]
+      - text: "should not use underscores in Go names; (var|const|type)"
+        linters: [ stylecheck, revive ]
+      - text: "put a space between"
+        linters: [ gocritic ]
+      - text: "should have comment"
+        linters: [ revive ]
+      - text: "package-comments"
+        linters: [ revive ]
+      - text: "unused-parameter"
+        linters: [ stylecheck, revive ]
+      - text: "is not checked"
+        linters: [ gosec ]
+      - text: "weak crypto"
+        linters: [ gosec ]
+      - text: "ioutil.Tempfile"
+        linters: [ gosec ]
+      - text: "SetType"
+        linters: [ errcheck ]
+      - text: "AbortWithError"
+        linters: [ errcheck ]
+      - text: "should not be capitalized"
+        linters: [ gocritic ]
+      - text: "G402: TLS InsecureSkipVerify set true"
+        linters: [ gosec ]
+      - text: 'error strings should not'
+        linters: [ staticcheck ]
+      - text: 'SA1019: "golang.org/x/crypto/openpgp/armor" is deprecated'
+        linters: [ staticcheck ]
+      - text: 'SA1019: "golang.org/x/crypto/openpgp/packet" is deprecated'
+        linters: [ staticcheck ]
+      - text: 'SA1019: "golang.org/x/crypto/openpgp" is deprecated'
+        linters: [ staticcheck ]
+      - text: "G115"
+        linters: [ gosec ]
+      - path: "_test\\.go"
+        linters:
+          - bodyclose
+          - dupl
+          - funlen
+          - goconst
+          - gosec
+          - noctx
+          - wrapcheck
+
+
+issues:
+  # Maximum count of issues with the same text.
+  # Set to 0 to disable.
+  # Default: 3
+  max-same-issues: 50

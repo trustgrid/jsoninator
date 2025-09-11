@@ -1,0 +1,31 @@
+input:
+  http:
+    url: https://portal.trustgrid.io/api/node?projection[0]=uid&projection[1]=online&projection[2]=name&projection[3]=state&projection[4]=cluster&projection[5]=device&projection[6]=lastip&projection[7]=created_at&projection[8]=tags&projection[9]=heartbeat&projection[10][0]=config&projection[10][1]=vpn&projection[10][2]=networks&projection[11][0]=config&projection[11][1]=gateway&projection[11][2]=enabled&projection[12][0]=config&projection[12][1]=gateway&projection[12][2]=udpEnabled&projection[13][0]=config&projection[13][1]=gateway&projection[13][2]=type&projection[14][0]=config&projection[14][1]=gateway&projection[14][2]=monitorHops&projection[15][0]=config&projection[15][1]=gateway&projection[15][2]=hopMonitoring&projection[16][0]=shadow&projection[16][1]=reported&projection[16][2]=node-core.version&projection[17][0]=shadow&projection[17][1]=reported&projection[17][2]=cluster.master&projection[18][0]=shadow&projection[18][1]=reported&projection[18][2]=package.version&projection[19][0]=shadow&projection[19][1]=reported&projection[19][2]=os.distro.id&projection[20][0]=shadow&projection[20][1]=reported&projection[20][2]=os.distro.version&projection[21][0]=shadow&projection[21][1]=reported&projection[21][2]=os.name&projection[22][0]=shadow&projection[22][1]=reported&projection[22][2]=os.version&projection[23][0]=shadow&projection[23][1]=reported&projection[23][2]=ssh.local&projection[24][0]=shadow&projection[24][1]=reported&projection[24][2]=dnsResolution&projection[25][0]=shadow&projection[25][1]=reported&projection[25][2]=repoConnectivity&projection[26]=location&projection[27]=manualLocation&projection[28]=disconnectTime
+    method: GET
+    headers:
+      Authorization: trustgrid-token ${TRUSTGRID_API_TOKEN_ID}:${TRUSTGRID_API_TOKEN_SECRET} 
+      Accept: application/json
+
+pipeline:
+  processors:
+    - filter:
+        query: |
+          {{if (eq .type "Node")}}true{{else}}false{{end}}
+    - map:
+        field: config.gateway
+    - transform:
+        fields:
+          udpEnabled: true
+          udpPort: |
+            {{if .udpPort}}{{.udpPort}}{{else}}{{.port}}{{end}}
+          maxClientWriteMbps: |
+            {{if eq .maxClientWriteMbps 0.0}}nil{{else}}{{.maxClientWriteMbps}}{{end}}
+
+
+output:
+  http:
+    url: https://portal.trustgrid.io/api/node/{{.uid}}/config/gateway
+    method: PUT
+    headers:
+      Authorization: trustgrid-token ${TRUSTGRID_API_TOKEN_ID}:${TRUSTGRID_API_TOKEN_SECRET} 
+      Content-Type: application/json
