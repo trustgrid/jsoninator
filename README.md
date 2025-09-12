@@ -65,6 +65,75 @@ To run jsoninator with consequences, pass `-dryrun=false`, eg:
 jsoninator -plan=my-plan.yaml -dryrun=false
 ```
 
+## Running on Different Platforms
+
+### macOS and Linux
+
+On macOS and Linux systems, you can run jsoninator using bash or zsh:
+
+```bash
+jsoninator -plan=my-plan.yaml
+```
+
+### Windows PowerShell
+
+On Windows systems, you can run jsoninator using PowerShell:
+
+```powershell
+.\jsoninator.exe -plan=my-plan.yaml
+```
+
+Or if jsoninator is in your PATH:
+
+```powershell
+jsoninator -plan=my-plan.yaml
+```
+
+## Setting Environment Variables
+
+### macOS and Linux
+
+Set environment variables using export:
+
+```bash
+export TRUSTGRID_API_KEY_ID="your_key_id_here"
+export TRUSTGRID_API_KEY_SECRET="your_secret_here"
+jsoninator -plan=my-plan.yaml
+```
+
+Or set them inline for a single command:
+
+```bash
+TRUSTGRID_API_KEY_ID="your_key_id_here" TRUSTGRID_API_KEY_SECRET="your_secret_here" jsoninator -plan=my-plan.yaml
+```
+
+### Windows PowerShell
+
+Set environment variables using `$env:`:
+
+```powershell
+$env:TRUSTGRID_API_KEY_ID="your_key_id_here"
+$env:TRUSTGRID_API_KEY_SECRET="your_secret_here"
+jsoninator -plan=my-plan.yaml
+```
+
+Or set them for the current session:
+
+```powershell
+[Environment]::SetEnvironmentVariable("TRUSTGRID_API_KEY_ID", "your_key_id_here", "Process")
+[Environment]::SetEnvironmentVariable("TRUSTGRID_API_KEY_SECRET", "your_secret_here", "Process")
+jsoninator -plan=my-plan.yaml
+```
+
+### Windows Command Prompt
+
+If using Command Prompt instead of PowerShell:
+
+```cmd
+set TRUSTGRID_API_KEY_ID=your_key_id_here
+set TRUSTGRID_API_KEY_SECRET=your_secret_here
+jsoninator -plan=my-plan.yaml
+```
 
 Input configuration is limited to `http` and `raw`. 
 
