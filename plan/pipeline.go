@@ -90,6 +90,7 @@ func (p Pipeline) Process(ctx context.Context, data Message) (Message, error) {
 	}
 	for _, processor := range p.Processors {
 		var err error
+		slog.Error("running processor", "type", fmt.Sprintf("%T", processor))
 		data, err = processor.Process(ctx, data)
 		switch {
 		case err != nil:
@@ -113,7 +114,7 @@ type Transform struct {
 // Process implements the Processor interface for Transform. The templates
 // for each field will have the input message as its data context.
 func (t Transform) Process(ctx context.Context, data Message) (Message, error) {
-	reporter, ok := ctx.Value("reporter").(*Reporter)
+	reporter, ok := ctx.Value(reporterKey).(*Reporter)
 	if !ok {
 		return nil, fmt.Errorf("transform processor requires reporter in context")
 	}
@@ -123,7 +124,9 @@ func (t Transform) Process(ctx context.Context, data Message) (Message, error) {
 		return nil, fmt.Errorf("transform processor expects input to be a map, got %T", data)
 	}
 
+	slog.Error("in transformer")
 	for k, v := range t.Fields {
+		slog.Error("transforming field", "key", k, "template", v)
 		tmpl, err := template.New(k).Funcs(templateFuncs).Parse(v)
 		if err != nil {
 			slog.Error("unable to parse transform template", "key", k, "template", v, "err", err)
@@ -148,11 +151,9 @@ func (t Transform) Process(ctx context.Context, data Message) (Message, error) {
 				reporter.Change(k, m[k], str)
 				m[k] = str
 			}
-		} else {
-			if m[k] != v2 {
-				reporter.Change(k, m[k], v2)
-				m[k] = v2
-			}
+		} else if m[k] != v2 {
+			reporter.Change(k, m[k], v2)
+			m[k] = v2
 		}
 	}
 
@@ -161,22 +162,32 @@ func (t Transform) Process(ctx context.Context, data Message) (Message, error) {
 
 // Replace completely replaces the input message with the output of a Go template.
 type Replace struct {
-	Template string `yaml:"template"`
+	Template map[string]string `yaml:"template"`
 }
 
 // Process implements the Processor interface for Replace. The template provided
 // will have the input message as its data context.
 func (r Replace) Process(ctx context.Context, data Message) (Message, error) {
-	tmpl, err := template.New("template").Funcs(templateFuncs).Parse(r.Template)
-	if err != nil {
-		return nil, fmt.Errorf("parsing template: %w", err)
+	out := make(map[string]any)
+
+	for k, v := range r.Template {
+		tmpl, err := template.New("template").Funcs(templateFuncs).Parse(v)
+		if err != nil {
+			return nil, fmt.Errorf("parsing template: %w", err)
+		}
+
+		var res bytes.Buffer
+		if err := tmpl.Execute(&res, data); err != nil {
+			return nil, fmt.Errorf("executing template: %w", err)
+		}
+
+		var v2 any
+		if err := json.Unmarshal(res.Bytes(), &v2); err != nil {
+			v2 = strings.TrimSpace(res.String())
+		}
+		out[k] = v2
 	}
-	var out bytes.Buffer
-	if err := tmpl.Execute(&out, data); err != nil {
-		return nil, fmt.Errorf("executing template: %w", err)
-	}
-	var msg Message
-	return msg, json.Unmarshal(out.Bytes(), &msg)
+	return out, nil
 }
 
 var templateFuncs = template.FuncMap{
@@ -197,7 +208,7 @@ func (f Filter) suffixesMatch(ctx context.Context, data Message) bool {
 	if f.Suffix == nil {
 		return true
 	}
-	reporter, ok := ctx.Value("reporter").(*Reporter)
+	reporter, ok := ctx.Value(reporterKey).(*Reporter)
 	if !ok {
 		slog.Error("filter processor requires reporter in context - this is a bug in jsoninator")
 		return false
@@ -222,7 +233,7 @@ func (f Filter) prefixesMatch(ctx context.Context, data Message) bool {
 	if f.Prefix == nil {
 		return true
 	}
-	reporter, ok := ctx.Value("reporter").(*Reporter)
+	reporter, ok := ctx.Value(reporterKey).(*Reporter)
 	if !ok {
 		slog.Error("filter processor requires reporter in context - this is a bug in jsoninator")
 		return false
@@ -247,7 +258,7 @@ func (f Filter) queryMatches(ctx context.Context, data Message) bool {
 	if f.Query == "" {
 		return true
 	}
-	reporter, ok := ctx.Value("reporter").(*Reporter)
+	reporter, ok := ctx.Value(reporterKey).(*Reporter)
 	if !ok {
 		slog.Error("filter processor requires reporter in context - this is a bug in jsoninator")
 		return false
