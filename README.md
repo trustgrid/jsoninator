@@ -48,7 +48,6 @@ output:
 
 **Note that environment variables are expanded, so you don't need to store sensitive information in the plan file itself**
 
-## Input
 ## Running
 
 To run jsoninator, you need to provide it with a plan file:
@@ -74,6 +73,10 @@ On macOS and Linux systems, you can run jsoninator using bash or zsh:
 ```bash
 jsoninator -plan=my-plan.yaml
 ```
+
+The executable you download from GitHub is not signed with Apple or Microsoft developer programs.
+
+To allow the executable to run anyway on MacOS, follow instructions here: https://support.apple.com/en-us/102445
 
 ### Windows PowerShell
 
@@ -134,6 +137,8 @@ set TRUSTGRID_API_KEY_ID=your_key_id_here
 set TRUSTGRID_API_KEY_SECRET=your_secret_here
 jsoninator -plan=my-plan.yaml
 ```
+
+## Input
 
 Input configuration is limited to `http` and `raw`. 
 
