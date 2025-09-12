@@ -7,3 +7,6 @@ test:
 
 lint:
 	golangci-lint run --tests=false ./...
+
+build:
+	go build -o bin/jsoninator main.go
