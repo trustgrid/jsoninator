@@ -7,7 +7,6 @@
     "tags": {
       "one": "two"
     },
-    "tgTags": {},
     "online": false,
     "shadow": {
       "reported": {
@@ -18,40 +17,6 @@
     },
     "device": {
       "mode": "agent"
-    },
-    "location": {
-      "continent_name": "North America",
-      "zip": "80138",
-      "calling_code": null,
-      "city": "Parker",
-      "ip": "73.14.205.172",
-      "latitude": 39.540740966796875,
-      "continent_code": "NA",
-      "type": "ipv4",
-      "country_code": "US",
-      "country_flag_emoji_unicode": null,
-      "country_name": "United States",
-      "is_eu": false,
-      "connection": {
-        "asn": 7922,
-        "isp": "Comcast"
-      },
-      "country_flag_emoji": null,
-      "location": {
-        "Languages": [
-          {
-            "name": "English",
-            "native": "English",
-            "code": "en"
-          }
-        ],
-        "capital": "Washington D.C.",
-        "geoname_id": 5434006
-      },
-      "region_name": "Colorado",
-      "country_flag": null,
-      "longitude": -104.70938110351562,
-      "region_code": "CO"
     },
     "type": "Agent",
     "keys": {},
@@ -66,23 +31,6 @@
           "synPayloadSize": 1000,
           "monitorHopsInterval": 100
         }
-      },
-      "vpn": {
-        "networks": [
-          {
-            "routes": [],
-            "interfaces": [],
-            "ip": "100.64.0.88",
-            "name": "default",
-            "dns": {},
-            "id": 1849,
-            "routingPolicy": {
-              "exports": [],
-              "imports": []
-            },
-            "services": []
-          }
-        ]
       }
     }
   },
@@ -92,7 +40,6 @@
     "name": "agent2",
     "state": "ACTIVE",
     "tags": {},
-    "tgTags": {},
     "online": false,
     "shadow": {
       "reported": {
@@ -103,40 +50,6 @@
     },
     "device": {
       "mode": "agent"
-    },
-    "location": {
-      "continent_name": "North America",
-      "zip": "80138",
-      "calling_code": null,
-      "city": "Parker",
-      "ip": "73.14.205.172",
-      "latitude": 39.540740966796875,
-      "continent_code": "NA",
-      "type": "ipv4",
-      "country_code": "US",
-      "country_flag_emoji_unicode": null,
-      "country_name": "United States",
-      "is_eu": false,
-      "connection": {
-        "asn": 7922,
-        "isp": "Comcast"
-      },
-      "country_flag_emoji": null,
-      "location": {
-        "Languages": [
-          {
-            "name": "English",
-            "native": "English",
-            "code": "en"
-          }
-        ],
-        "capital": "Washington D.C.",
-        "geoname_id": 5434006
-      },
-      "region_name": "Colorado",
-      "country_flag": null,
-      "longitude": -104.70938110351562,
-      "region_code": "CO"
     },
     "type": "Agent",
     "keys": {},
@@ -151,317 +64,6 @@
           "synPayloadSize": 1000,
           "monitorHopsInterval": 100
         }
-      },
-      "vpn": {
-        "networks": [
-          {
-            "routes": [],
-            "interfaces": [],
-            "ip": "100.64.0.89",
-            "name": "default",
-            "dns": {},
-            "id": 1849,
-            "routingPolicy": {
-              "exports": [],
-              "imports": []
-            },
-            "services": []
-          }
-        ]
-      }
-    }
-  },
-  {
-    "uid": "63d3f449-dea9-48a6-833e-e14f9fb61510",
-    "lastip": "73.14.205.172",
-    "name": "gonode",
-    "state": "INACTIVE",
-    "cluster": "gonode-cluster.dev.regression.trustgrid.io",
-    "tags": {},
-    "tgTags": {},
-    "online": false,
-    "shadow": {
-      "reported": {},
-      "desired": {}
-    },
-    "device": {
-      "model": "beast",
-      "os": "linux",
-      "wan": "enp6s0",
-      "vendor": "terry"
-    },
-    "location": {
-      "continent_name": "North America",
-      "zip": "80138",
-      "calling_code": null,
-      "city": "Parker",
-      "ip": "73.14.205.172",
-      "latitude": 39.540740966796875,
-      "continent_code": "NA",
-      "type": "ipv4",
-      "country_code": "US",
-      "country_flag_emoji_unicode": null,
-      "country_name": "United States",
-      "is_eu": false,
-      "connection": {
-        "asn": 7922,
-        "isp": "Comcast"
-      },
-      "country_flag_emoji": null,
-      "location": {
-        "Languages": [
-          {
-            "name": "English",
-            "native": "English",
-            "code": "en"
-          }
-        ],
-        "capital": "Washington D.C.",
-        "geoname_id": 5434006
-      },
-      "region_name": "Colorado",
-      "country_flag": null,
-      "longitude": -104.70938110351562,
-      "region_code": "CO"
-    },
-    "type": "Node",
-    "keys": {},
-    "tgrn": "tgrn:tg::nodes:node/63d3f449-dea9-48a6-833e-e14f9fb61510",
-    "created_at": 1684724478,
-    "config": {
-      "gateway": {
-        "enabled": true,
-        "hopMonitoring": {
-          "monitorHops": "some",
-          "sendMonitorResets": true
-        },
-        "monitorHops": false,
-        "type": "hub",
-        "udpEnabled": false
-      },
-      "vpn": {
-        "networks": [
-          {
-            "routes": [],
-            "interfaces": [
-              {
-                "name": "enp6s0",
-                "inDefaultRoute": false,
-                "outDefaultRoute": false,
-                "insideNats": [
-                  {
-                    "localCidr": "127.0.0.1/32",
-                    "description": "node1",
-                    "networkCidr": "172.16.169.12/32"
-                  }
-                ],
-                "outsideNats": [
-                  {
-                    "localCidr": "127.0.0.1/32",
-                    "networkCidr": "172.16.22.50/32",
-                    "proxyArp": false
-                  }
-                ]
-              }
-            ],
-            "route": "172.16.169.0/24",
-            "ip": "172.16.169.62",
-            "name": "profiled-nodes",
-            "dns": {},
-            "id": 1068,
-            "routingPolicy": {
-              "exports": [],
-              "imports": []
-            },
-            "services": []
-          },
-          {
-            "name": "asdf",
-            "id": 1131
-          }
-        ]
-      }
-    }
-  },
-  {
-    "uid": "4bf8b1c6-fdc1-4dee-a76b-fa1e2d83f625",
-    "lastip": "162.229.209.227",
-    "name": "jlo-profiled",
-    "state": "INACTIVE",
-    "tags": {},
-    "tgTags": {},
-    "online": false,
-    "shadow": {
-      "reported": {
-        "cluster.master": "false",
-        "dnsResolution": "healthy",
-        "node-core.version": "20240212-224209.0fe38ed",
-        "os.distro.id": "ubuntu",
-        "os.distro.version": "18.04.5 LTS (Bionic Beaver)",
-        "package.version": "1.5.20240212-1978",
-        "repoConnectivity": "true",
-        "ssh.local": "false"
-      }
-    },
-    "device": {
-      "lan": [
-        "enp0s8"
-      ],
-      "model": "virtualbox",
-      "wan": "enp0s3",
-      "mac": "08:00:27:A2:D9:4C",
-      "vendor": "vagrant"
-    },
-    "location": {
-      "continent_name": "North America",
-      "zip": "78723",
-      "calling_code": null,
-      "city": "Austin",
-      "ip": "162.229.209.227",
-      "latitude": 30.307640075683594,
-      "continent_code": "NA",
-      "type": "ipv4",
-      "country_code": "US",
-      "country_flag_emoji_unicode": null,
-      "country_name": "United States",
-      "is_eu": false,
-      "connection": {
-        "asn": 7018,
-        "isp": "Att Services Inc"
-      },
-      "country_flag_emoji": null,
-      "location": {
-        "Languages": [
-          {
-            "name": "English",
-            "native": "English",
-            "code": "en"
-          }
-        ],
-        "capital": "Washington D.C.",
-        "geoname_id": 4671654
-      },
-      "region_name": "Texas",
-      "country_flag": null,
-      "longitude": -97.68678283691406,
-      "region_code": "TX"
-    },
-    "type": "Node",
-    "keys": {},
-    "tgrn": "tgrn:tg::nodes:node/4bf8b1c6-fdc1-4dee-a76b-fa1e2d83f625",
-    "created_at": 1707942635,
-    "config": {
-      "gateway": {
-        "enabled": false,
-        "hopMonitoring": {
-          "monitorHops": "some",
-          "sendMonitorResets": true
-        }
-      }
-    }
-  },
-  {
-    "uid": "cd529bbe-ed05-4862-b11c-9822973f51d6",
-    "lastip": "136.62.156.170",
-    "name": "mctest-lanner12",
-    "state": "ACTIVE",
-    "tags": {
-      "manualupdate": "true"
-    },
-    "tgTags": {},
-    "online": true,
-    "shadow": {
-      "reported": {
-        "dnsResolution": "healthy",
-        "node-core.version": "20240119-210216.3f2680f",
-        "os.distro.id": "ubuntu",
-        "os.distro.version": "18.04.3 LTS (Bionic Beaver)",
-        "package.version": "1.5.20240119-1943",
-        "repoConnectivity": "true",
-        "ssh.local": "false"
-      }
-    },
-    "device": {
-      "mac": "00:90:0B:79:13:81",
-      "model": "NCA-1210",
-      "vendor": "lanner"
-    },
-    "location": {
-      "continent_name": "North America",
-      "zip": "78703",
-      "calling_code": null,
-      "city": "Austin",
-      "ip": "136.62.156.170",
-      "latitude": 30.289730072021484,
-      "continent_code": "NA",
-      "type": "ipv4",
-      "country_code": "US",
-      "country_flag_emoji_unicode": null,
-      "country_name": "United States",
-      "is_eu": false,
-      "connection": {
-        "asn": 16591,
-        "isp": "Google"
-      },
-      "country_flag_emoji": null,
-      "location": {
-        "capital": "Washington D.C.",
-        "Languages": [
-          {
-            "name": "English",
-            "native": "English",
-            "code": "en"
-          }
-        ],
-        "geoname_id": 4671654
-      },
-      "region_name": "Texas",
-      "country_flag": null,
-      "longitude": -97.7664794921875,
-      "region_code": "TX"
-    },
-    "type": "Node",
-    "keys": {},
-    "tgrn": "tgrn:tg::nodes:node/cd529bbe-ed05-4862-b11c-9822973f51d6",
-    "created_at": 1600122846,
-    "disconnectTime": 1739364085,
-    "config": {
-      "gateway": {
-        "enabled": true,
-        "hopMonitoring": {
-          "monitorHops": "some",
-          "sendMonitorResets": true
-        },
-        "monitorHops": true,
-        "type": "private",
-        "udpEnabled": true
-      },
-      "vpn": {
-        "networks": [
-          {
-            "routes": [],
-            "interfaces": [
-              {
-                "name": "enp0s20f1",
-                "inDefaultRoute": true,
-                "outDefaultRoute": false,
-                "insideNats": [
-                  {
-                    "localCidr": "172.28.127.0/24",
-                    "networkCidr": "172.28.127.0/24"
-                  }
-                ],
-                "outsideNats": []
-              }
-            ],
-            "route": "0.0.0.0/0",
-            "ip": "172.19.254.21",
-            "dns": {},
-            "name": "internet2",
-            "id": 1128,
-            "services": []
-          }
-        ]
       }
     }
   },
@@ -486,7 +88,6 @@
       "taggregator": "two",
       "test": "test2"
     },
-    "tgTags": {},
     "online": true,
     "shadow": {
       "reported": {
@@ -504,40 +105,6 @@
       "model": "esx",
       "vendor": "vmware"
     },
-    "location": {
-      "zip": "80304",
-      "continent_name": "North America",
-      "calling_code": "",
-      "city": "Boulder",
-      "ip": "64.17.3.164",
-      "latitude": 40.04518127441406,
-      "continent_code": "NA",
-      "type": "ipv4",
-      "country_code": "US",
-      "country_name": "United States",
-      "country_flag_emoji_unicode": "",
-      "is_eu": false,
-      "region_name": "Colorado",
-      "connection": {
-        "asn": 27325,
-        "isp": "Zcolo"
-      },
-      "country_flag_emoji": "",
-      "location": {
-        "capital": "Washington D.C.",
-        "Languages": [
-          {
-            "name": "English",
-            "native": "English",
-            "code": "en"
-          }
-        ],
-        "geoname_id": 5574991
-      },
-      "country_flag": "",
-      "region_code": "CO",
-      "longitude": -105.29196166992188
-    },
     "heartbeat": 1757611303,
     "type": "Node",
     "keys": {},
@@ -554,68 +121,6 @@
         },
         "type": "private",
         "udpEnabled": true
-      },
-      "vpn": {
-        "networks": [
-          {
-            "interfaces": [
-              {
-                "name": "ens192",
-                "inDefaultRoute": false,
-                "outDefaultRoute": false,
-                "insideNats": [
-                  {
-                    "localCidr": "10.20.10.52/32",
-                    "networkCidr": "172.16.101.52/32"
-                  },
-                  {
-                    "localCidr": "10.20.10.51/32",
-                    "networkCidr": "172.16.101.50/32"
-                  }
-                ],
-                "outsideNats": [
-                  {
-                    "description": "description2",
-                    "localCidr": "172.16.102.52/32",
-                    "networkCidr": "172.16.102.52/32",
-                    "proxyArp": true
-                  },
-                  {
-                    "localCidr": "172.16.160.100/32",
-                    "networkCidr": "172.16.160.101/32",
-                    "proxyArp": true
-                  }
-                ]
-              }
-            ],
-            "clients": [],
-            "ip": "172.16.101.201",
-            "dns": {
-              "enabled": false,
-              "upstream": [
-                "8.8.8.8:53"
-              ]
-            },
-            "forwarding": true,
-            "routingPolicy": {
-              "exports": [],
-              "imports": []
-            },
-            "services": [
-              {
-                "name": "node3-ssh",
-                "port": 9999,
-                "ip": "172.16.101.201"
-              }
-            ],
-            "wireguardEnabled": false,
-            "routes": [],
-            "route": "172.16.101.0/24",
-            "wireguardPort": 22,
-            "name": "profiled-nodes",
-            "id": 1068
-          }
-        ]
       }
     }
   },
@@ -636,7 +141,6 @@
       "pin-active": "a9f1fedd-a474-455b-a123-37a035409229",
       "test": "test2"
     },
-    "tgTags": {},
     "online": true,
     "shadow": {
       "reported": {
@@ -655,40 +159,6 @@
       "model": "esx",
       "vendor": "vmware"
     },
-    "location": {
-      "continent_name": "North America",
-      "zip": "80304",
-      "calling_code": "",
-      "city": "Boulder",
-      "latitude": 40.04518127441406,
-      "ip": "64.17.3.164",
-      "continent_code": "NA",
-      "type": "ipv4",
-      "country_code": "US",
-      "country_name": "United States",
-      "country_flag_emoji_unicode": "",
-      "is_eu": false,
-      "connection": {
-        "asn": 27325,
-        "isp": "Zcolo"
-      },
-      "region_name": "Colorado",
-      "country_flag_emoji": "",
-      "location": {
-        "capital": "Washington D.C.",
-        "Languages": [
-          {
-            "name": "English",
-            "native": "English",
-            "code": "en"
-          }
-        ],
-        "geoname_id": 5574991
-      },
-      "country_flag": "",
-      "longitude": -105.29196166992188,
-      "region_code": "CO"
-    },
     "heartbeat": 1757611346,
     "type": "Node",
     "keys": {},
@@ -705,14 +175,6 @@
         "monitorHops": false,
         "type": "public",
         "udpEnabled": true
-      },
-      "vpn": {
-        "networks": [
-          {
-            "name": "profiled-nodes",
-            "id": 1068
-          }
-        ]
       }
     }
   },
@@ -729,7 +191,6 @@
       "pin-active": "a9f1fedd-a474-455b-a123-37a035409229",
       "test": "test1"
     },
-    "tgTags": {},
     "online": true,
     "shadow": {
       "reported": {
@@ -747,40 +208,6 @@
       "mac": "00:50:56:8E:28:AC",
       "model": "esx",
       "vendor": "vmware"
-    },
-    "location": {
-      "zip": "80304",
-      "continent_name": "North America",
-      "calling_code": "",
-      "city": "Boulder",
-      "latitude": 40.04518127441406,
-      "ip": "64.17.3.164",
-      "continent_code": "NA",
-      "type": "ipv4",
-      "country_code": "US",
-      "is_eu": false,
-      "country_name": "United States",
-      "country_flag_emoji_unicode": "",
-      "region_name": "Colorado",
-      "connection": {
-        "asn": 27325,
-        "isp": "Zcolo"
-      },
-      "location": {
-        "capital": "Washington D.C.",
-        "Languages": [
-          {
-            "name": "English",
-            "native": "English",
-            "code": "en"
-          }
-        ],
-        "geoname_id": 5574991
-      },
-      "country_flag_emoji": "",
-      "country_flag": "",
-      "longitude": -105.29196166992188,
-      "region_code": "CO"
     },
     "heartbeat": 1757611364,
     "type": "Node",
@@ -809,7 +236,6 @@
     "tags": {
       "red_koolAID": "YUM"
     },
-    "tgTags": {},
     "online": false,
     "shadow": {
       "reported": {},
@@ -826,124 +252,6 @@
     "config": {}
   },
   {
-    "uid": "29b9976e-1bca-411b-aefe-d44afef6a7b9",
-    "name": "terry-double-agent",
-    "state": "ACTIVE",
-    "tags": {},
-    "tgTags": {},
-    "shadow": {
-      "reported": {},
-      "desired": {}
-    },
-    "device": {
-      "mode": "agent"
-    },
-    "type": "Agent",
-    "keys": {},
-    "tgrn": "tgrn:tg::nodes:node/29b9976e-1bca-411b-aefe-d44afef6a7b9",
-    "created_at": 1734374803,
-    "config": {
-      "gateway": {
-        "enabled": false,
-        "hopMonitoring": {
-          "sendMonitorResets": true,
-          "monitorHops": "all",
-          "synPayloadSize": 1000,
-          "monitorHopsInterval": 100
-        }
-      },
-      "vpn": {
-        "networks": [
-          {
-            "routes": [],
-            "interfaces": [],
-            "ip": "100.64.0.100",
-            "name": "default",
-            "dns": {},
-            "id": 1849,
-            "routingPolicy": {
-              "exports": [],
-              "imports": []
-            },
-            "services": []
-          }
-        ]
-      }
-    }
-  },
-  {
-    "uid": "35ee5516-c6d5-409b-b1ba-6aa2d0dd92fc",
-    "lastip": "12.244.52.246",
-    "name": "terry-profiled",
-    "state": "ACTIVE",
-    "tags": {},
-    "tgTags": {},
-    "online": true,
-    "shadow": {
-      "reported": {
-        "node-core.version": "20220124-204131.4305.dd0ef27",
-        "os.distro.id": "ubuntu",
-        "os.distro.version": "18.04.3 LTS (Bionic Beaver)",
-        "package.version": "1.5.20220124-1143"
-      }
-    },
-    "device": {
-      "mac": "00:50:56:8E:AA:28",
-      "model": "esx",
-      "vendor": "vmware"
-    },
-    "location": {
-      "continent_name": "North America",
-      "zip": "78727",
-      "calling_code": null,
-      "city": "Austin",
-      "ip": "12.244.52.246",
-      "latitude": 30.437070846557617,
-      "continent_code": "NA",
-      "type": "ipv4",
-      "country_code": "US",
-      "country_flag_emoji_unicode": null,
-      "country_name": "United States",
-      "is_eu": false,
-      "connection": {
-        "asn": 7018,
-        "isp": "Att Services Inc"
-      },
-      "country_flag_emoji": null,
-      "location": {
-        "capital": "Washington D.C.",
-        "Languages": [
-          {
-            "name": "English",
-            "native": "English",
-            "code": "en"
-          }
-        ],
-        "geoname_id": 4671654
-      },
-      "region_name": "Texas",
-      "country_flag": null,
-      "longitude": -97.73773193359375,
-      "region_code": "TX"
-    },
-    "type": "Node",
-    "keys": {},
-    "tgrn": "tgrn:tg::nodes:node/35ee5516-c6d5-409b-b1ba-6aa2d0dd92fc",
-    "created_at": 1552940922,
-    "config": {
-      "gateway": {
-        "enabled": false,
-        "hopMonitoring": {
-          "monitorHops": "some",
-          "sendMonitorResets": true
-        },
-        "monitorHops": true,
-        "type": "public",
-        "udpEnabled": true
-      }
-    }
-  },
-  {
     "uid": "e04f0a95-cf9f-46ca-b5fa-df8a00b0b862",
     "lastip": "52.3.102.68",
     "name": "ztnagw",
@@ -953,7 +261,6 @@
       "two": "kapow",
       "one": "boom2"
     },
-    "tgTags": {},
     "online": false,
     "shadow": {
       "reported": {
@@ -975,40 +282,6 @@
       "mac": "0E:A5:DD:27:8B:B1",
       "availability-zone": "us-east-1a"
     },
-    "location": {
-      "continent_name": "North America",
-      "zip": "20147",
-      "calling_code": null,
-      "city": "Ashburn",
-      "ip": "52.3.102.68",
-      "latitude": 39.043701171875,
-      "continent_code": "NA",
-      "type": "ipv4",
-      "country_code": "US",
-      "country_flag_emoji_unicode": null,
-      "country_name": "United States",
-      "is_eu": false,
-      "connection": {
-        "asn": 14618,
-        "isp": "amazon.com Inc."
-      },
-      "country_flag_emoji": null,
-      "location": {
-        "Languages": [
-          {
-            "name": "English",
-            "native": "English",
-            "code": "en"
-          }
-        ],
-        "capital": "Washington D.C.",
-        "geoname_id": 4744870
-      },
-      "region_name": "Virginia",
-      "country_flag": null,
-      "longitude": -77.47419738769531,
-      "region_code": "VA"
-    },
     "type": "Node",
     "keys": {},
     "tgrn": "tgrn:tg::nodes:node/e04f0a95-cf9f-46ca-b5fa-df8a00b0b862",
@@ -1021,14 +294,6 @@
           "monitorHops": "some",
           "sendMonitorResets": true
         }
-      },
-      "vpn": {
-        "networks": [
-          {
-            "name": "tftest2",
-            "id": 1510
-          }
-        ]
       }
     }
   }

@@ -3,6 +3,7 @@ package plan
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,6 +11,12 @@ import (
 )
 
 func Test_Pipeline(t *testing.T) {
+	go func() {
+		for range reports {
+
+		}
+	}()
+
 	t.Run("map", func(t *testing.T) {
 		t.Run("happy path", func(t *testing.T) {
 			processor := Map{
@@ -21,7 +28,10 @@ func Test_Pipeline(t *testing.T) {
 					"gateway": "gwgwgw",
 				},
 			}
-			output, err := processor.Process(input)
+
+			ctx, cancel := WithReporter(t.Context(), "test")
+			defer cancel()
+			output, err := processor.Process(ctx, input)
 			require.NoError(t, err)
 			res, ok := output.(string)
 			require.True(t, ok)
@@ -35,38 +45,94 @@ func Test_Pipeline(t *testing.T) {
 			}
 
 			input := map[string]any{}
-			output, err := processor.Process(input)
+			ctx, cancel := WithReporter(t.Context(), "test")
+			defer cancel()
+			output, err := processor.Process(ctx, input)
 			require.NoError(t, err)
 			require.Equal(t, "123", output)
 		})
 	})
 
 	t.Run("filter", func(t *testing.T) {
-		t.Run("list happy path", func(t *testing.T) {
-			processor := Filter{
-				Query: `{{if hasPrefix .protocol "udp"}}true{{end}}`,
-			}
+		inputs := []map[string]any{
+			{"name": "bamboozle", "protocol": "tcp", "port": 80},
+			{"name": "bambi", "protocol": "udp", "port": 53},
+			{"name": "fizboozle", "protocol": "udp", "port": 123},
+		}
 
-			inputs := []map[string]any{
-				{"protocol": "tcp", "port": 80},
-				{"protocol": "udp", "port": 53},
-				{"protocol": "udp", "port": 123},
-			}
+		t.Run("suffix", func(t *testing.T) {
+			t.Run("list happy path", func(t *testing.T) {
+				processor := Filter{
+					Suffix: map[string]string{
+						"name": "oozle",
+					},
+				}
 
-			for _, input := range inputs {
-				t.Run("filtering "+fmt.Sprint(input), func(t *testing.T) {
-					output, err := processor.Process(input)
-					require.NoError(t, err)
-					if input["protocol"] == "udp" {
-						res, ok := output.(map[string]any)
-						require.True(t, ok)
-						require.Equal(t, "udp", res["protocol"])
-						require.Equal(t, input["port"], res["port"])
-					} else {
-						require.Nil(t, output)
-					}
-				})
-			}
+				for _, input := range inputs {
+					t.Run("filtering suffix"+fmt.Sprint(input), func(t *testing.T) {
+						ctx, cancel := WithReporter(t.Context(), "test")
+						defer cancel()
+						output, err := processor.Process(ctx, input)
+						require.NoError(t, err)
+						if strings.HasSuffix(input["name"].(string), "oozle") {
+							res := output.(map[string]any)
+							assert.True(t, strings.HasSuffix(res["name"].(string), "oozle"))
+						} else {
+							require.Nil(t, output)
+						}
+					})
+				}
+			})
+
+		})
+		t.Run("prefix", func(t *testing.T) {
+			t.Run("list happy path", func(t *testing.T) {
+				processor := Filter{
+					Prefix: map[string]string{
+						"name": "bam",
+					},
+				}
+
+				for _, input := range inputs {
+					t.Run("filtering prefix"+fmt.Sprint(input), func(t *testing.T) {
+						ctx, cancel := WithReporter(t.Context(), "test")
+						defer cancel()
+						output, err := processor.Process(ctx, input)
+						require.NoError(t, err)
+						if input["name"].(string)[0:3] == "bam" {
+							res := output.(map[string]any)
+							assert.True(t, strings.HasPrefix(res["name"].(string), "bam"))
+						} else {
+							require.Nil(t, output)
+						}
+					})
+				}
+			})
+
+		})
+		t.Run("query", func(t *testing.T) {
+			t.Run("list happy path", func(t *testing.T) {
+				processor := Filter{
+					Query: `{{if hasPrefix .protocol "udp"}}true{{end}}`,
+				}
+
+				for _, input := range inputs {
+					t.Run("filtering "+fmt.Sprint(input), func(t *testing.T) {
+						ctx, cancel := WithReporter(t.Context(), "test")
+						defer cancel()
+						output, err := processor.Process(ctx, input)
+						require.NoError(t, err)
+						if input["protocol"] == "udp" {
+							res, ok := output.(map[string]any)
+							require.True(t, ok)
+							require.Equal(t, "udp", res["protocol"])
+							require.Equal(t, input["port"], res["port"])
+						} else {
+							require.Nil(t, output)
+						}
+					})
+				}
+			})
 		})
 	})
 
@@ -76,7 +142,9 @@ func Test_Pipeline(t *testing.T) {
 				Template: `{"hi": "five"}`,
 			}
 
-			output, err := processor.Process([]byte(`{"foo":"bar"}`))
+			ctx, cancel := WithReporter(t.Context(), "test")
+			defer cancel()
+			output, err := processor.Process(ctx, []byte(`{"foo":"bar"}`))
 			require.NoError(t, err)
 			res, ok := output.(map[string]any)
 			require.True(t, ok)
@@ -88,7 +156,9 @@ func Test_Pipeline(t *testing.T) {
 				Template: `{"hi": "{{.foo}}"}`,
 			}
 
-			output, err := processor.Process(map[string]any{"foo": "bar"})
+			ctx, cancel := WithReporter(t.Context(), "test")
+			defer cancel()
+			output, err := processor.Process(ctx, map[string]any{"foo": "bar"})
 			require.NoError(t, err)
 			res, ok := output.(map[string]any)
 			require.True(t, ok)
@@ -105,7 +175,9 @@ func Test_Pipeline(t *testing.T) {
 				},
 			}
 
-			output, err := processor.Process(map[string]any{"foo": "bar"})
+			ctx, cancel := WithReporter(t.Context(), "test")
+			defer cancel()
+			output, err := processor.Process(ctx, map[string]any{"foo": "bar"})
 			require.NoError(t, err)
 			res, ok := output.(map[string]any)
 			require.True(t, ok)
@@ -120,7 +192,9 @@ func Test_Pipeline(t *testing.T) {
 				},
 			}
 
-			output, err := processor.Process(map[string]any{"foo": "bar"})
+			ctx, cancel := WithReporter(t.Context(), "test")
+			defer cancel()
+			output, err := processor.Process(ctx, map[string]any{"foo": "bar"})
 			require.NoError(t, err)
 			res, ok := output.(map[string]any)
 			require.True(t, ok)
@@ -182,7 +256,9 @@ func Test_Pipeline(t *testing.T) {
 					err = json.Unmarshal(b, &input)
 					require.NoError(t, err)
 
-					out, err := pipeline.Process(input)
+					ctx, cancel := WithReporter(t.Context(), "test")
+					defer cancel()
+					out, err := pipeline.Process(ctx, input)
 					require.NoError(t, err)
 					m, ok := out.(map[string]any)
 					require.True(t, ok)

@@ -1,0 +1,84 @@
+name: JSONINATOR CI
+
+on:
+  pull_request:
+
+jobs:
+  test:
+    permissions:
+      contents: read
+      id-token: write
+      packages: read
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 1.25
+
+      - name: Go test
+        run: |
+          make test
+
+  lint:
+    permissions:
+      contents: read
+      id-token: write
+      packages: read
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v4
+        with: 
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 1.25
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v7
+        with:
+          version: latest
+          args: --tests=false
+          only-new-issues: true
+
+  compile:
+    permissions:
+      contents: read
+      id-token: write
+      packages: read
+
+    name: Compile
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v4
+        with: 
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: compile server
+        run: make build

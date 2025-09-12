@@ -34,6 +34,14 @@ pipeline:
 `, strings.ReplaceAll(nodesjson, "\n", ""))
 
 func Test_Plan(t *testing.T) {
+	go func() {
+		select {
+		case <-reports:
+		case <-t.Context().Done():
+			return
+		}
+	}()
+
 	t.Run("parsing", func(t *testing.T) {
 		t.Run("happy path", func(t *testing.T) {
 			yamlData := `
@@ -88,10 +96,20 @@ input:
 
 		plan, err := Parse([]byte(e2eYAML))
 		require.NoError(t, err)
-		plan.Output = &bytes.Buffer{}
+		plan.skipReporter = true
+		buf := bytes.NewBuffer(nil)
+		plan.Output.Buffer = buf
 		require.NoError(t, plan.Run(t.Context()))
 		var outputs []Config
-		require.NoError(t, json.Unmarshal(plan.Output.(*bytes.Buffer).Bytes(), &outputs))
+		for _, line := range strings.Split(buf.String(), "\n") {
+			if line == "" {
+				continue
+			}
+			var c Config
+			require.NoError(t, json.Unmarshal([]byte(line), &c))
+			outputs = append(outputs, c)
+		}
+
 		for _, o := range outputs {
 			assert.True(t, o.UDPEnabled)
 			assert.Equal(t, o.Port, o.UDPPort)
