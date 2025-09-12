@@ -56,7 +56,7 @@ func (o Output) publishHTTP(ctx context.Context, original, processed Message) er
 	defer resp.Body.Close()
 	if o.HTTP.StatusCodes != nil && !slices.Contains(o.HTTP.StatusCodes, resp.StatusCode) {
 		slog.Error("unexpected status code", "status_code", resp.StatusCode, "expected", o.HTTP.StatusCodes)
-		io.Copy(os.Stderr, resp.Body)
+		io.Copy(os.Stderr, resp.Body) //nolint:errcheck // best effort
 		return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 

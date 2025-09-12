@@ -11,13 +11,6 @@ import (
 	"time"
 )
 
-type reportType string
-
-const (
-	reportType_Change reportType = "change"
-	reportType_Skip   reportType = "skip"
-)
-
 type change struct {
 	name   string
 	before any
@@ -38,9 +31,13 @@ func NewReporter(name string) *Reporter {
 	}
 }
 
+type ctxKey int
+
+const reporterKey ctxKey = 0
+
 func WithReporter(ctx context.Context, name string) (context.Context, func()) {
 	r := NewReporter(name)
-	return context.WithValue(ctx, "reporter", r), r.Close
+	return context.WithValue(ctx, reporterKey, r), r.Close
 }
 
 func (r *Reporter) Skip(filter string) {
@@ -64,9 +61,9 @@ func closeReporters() {
 }
 
 func report(ctx context.Context) {
-	stamp := fmt.Sprintf("%s-%d", time.Now().Format("20060102-150405"), rand.Int())
+	stamp := fmt.Sprintf("%s-%d", time.Now().Format("20060102-150405"), rand.Int()) //nolint:gosec // don't care
 	dir := filepath.Join("reports", stamp)
-	if err := os.MkdirAll(dir, 0755); err != nil {
+	if err := os.MkdirAll(dir, 0755); err != nil { //nolint:gosec // don't care
 		slog.Error("unable to create reports directory", "err", err)
 		panic(err)
 	}
@@ -74,7 +71,7 @@ func report(ctx context.Context) {
 	fmt.Println("reports will be written to", dir)
 
 	mkfile := func(name string) *os.File {
-		f, err := os.Create(filepath.Join(dir, name))
+		f, err := os.Create(filepath.Join(dir, name)) //nolint:gosec // we control this path...
 		if err != nil {
 			slog.Error("unable to create report file", "name", name, "dir", dir, "err", err)
 			panic(err)
@@ -96,15 +93,15 @@ func report(ctx context.Context) {
 	defer changeCSV.Flush()
 	defer noopCSV.Flush()
 
-	filterCSV.Write([]string{"name", "filter"})
-	changeCSV.Write([]string{"name", "field", "before", "after"})
-	noopCSV.Write([]string{"name"})
-
 	writeCSV := func(w *csv.Writer, record []string) {
 		if err := w.Write(record); err != nil {
 			slog.Error("unable to write report record", "record", record, "err", err)
 		}
 	}
+
+	writeCSV(filterCSV, []string{"name", "filter"})
+	writeCSV(changeCSV, []string{"name", "field", "before", "after"})
+	writeCSV(noopCSV, []string{"name"})
 
 	for {
 		select {
@@ -125,7 +122,6 @@ func report(ctx context.Context) {
 		case <-ctx.Done():
 			slog.Info("reporter exiting")
 			return
-
 		}
 	}
 }
