@@ -48,7 +48,6 @@ output:
 
 **Note that environment variables are expanded, so you don't need to store sensitive information in the plan file itself**
 
-## Input
 ## Running
 
 To run jsoninator, you need to provide it with a plan file:
@@ -65,6 +64,11 @@ To run jsoninator with consequences, pass `-dryrun=false`, eg:
 jsoninator -plan=my-plan.yaml -dryrun=false
 ```
 
+The executable you download from GitHub is not signed with Apple or Microsoft developer programs.
+
+To allow the executable to run anyway on MacOS, follow instructions here: https://support.apple.com/en-us/102445
+
+## Input
 
 Input configuration is limited to `http` and `raw`. 
 
