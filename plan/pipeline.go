@@ -90,7 +90,7 @@ func (p Pipeline) Process(ctx context.Context, data Message) (Message, error) {
 	}
 	for _, processor := range p.Processors {
 		var err error
-		slog.Error("running processor", "type", fmt.Sprintf("%T", processor))
+		slog.Info("running processor", "type", fmt.Sprintf("%T", processor))
 		data, err = processor.Process(ctx, data)
 		switch {
 		case err != nil:
@@ -124,9 +124,9 @@ func (t Transform) Process(ctx context.Context, data Message) (Message, error) {
 		return nil, fmt.Errorf("transform processor expects input to be a map, got %T", data)
 	}
 
-	slog.Error("in transformer")
+	slog.Debug("in transformer")
 	for k, v := range t.Fields {
-		slog.Error("transforming field", "key", k, "template", v)
+		slog.Debug("transforming field", "key", k, "template", v)
 		tmpl, err := template.New(k).Funcs(templateFuncs).Parse(v)
 		if err != nil {
 			slog.Error("unable to parse transform template", "key", k, "template", v, "err", err)
