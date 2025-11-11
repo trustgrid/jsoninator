@@ -43,7 +43,9 @@ func prompt() {
 			slog.Error("error reading input", "err", err)
 			return
 		}
-		os.Setenv(text, strings.TrimSpace(value))
+		if err := os.Setenv(text, strings.TrimSpace(value)); err != nil {
+			slog.Error("error setting env var", "err", err)
+		}
 	}
 }
 
