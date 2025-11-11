@@ -1,11 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"flag"
 	"fmt"
 	"log/slog"
 	"os"
+	"strings"
 
 	"trustgrid.io/jsoninator/plan"
 )
@@ -21,11 +23,36 @@ func setLogLevel() {
 	}
 }
 
+func prompt() {
+	reader := bufio.NewReader(os.Stdin)
+
+	for {
+		fmt.Print("Variable name (leave blank to finish): ")
+		text, err := reader.ReadString('\n')
+		if err != nil {
+			slog.Error("error reading input", "err", err)
+			return
+		}
+		text = strings.TrimSpace(text)
+		if text == "" {
+			return
+		}
+		fmt.Print("Value: ")
+		value, err := reader.ReadString('\n')
+		if err != nil {
+			slog.Error("error reading input", "err", err)
+			return
+		}
+		os.Setenv(text, strings.TrimSpace(value))
+	}
+}
+
 func main() {
 	setLogLevel()
 
 	dryrun := flag.Bool("dryrun", true, "When set (the default), this will not write to any outputs")
 	planFile := flag.String("plan", "", "Path to the plan YAML file")
+	promptFlag := flag.Bool("prompt", false, "If set, will ask you for variables")
 	flag.Parse()
 
 	if *planFile == "" {
@@ -39,6 +66,10 @@ func main() {
 
 	if *dryrun {
 		fmt.Println("DRY RUN ENABLED: No outputs will be written to")
+	}
+
+	if *promptFlag {
+		prompt()
 	}
 
 	program, err := plan.Parse(f)
