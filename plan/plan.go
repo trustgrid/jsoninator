@@ -24,6 +24,9 @@ type Plan struct {
 func Parse(data []byte) (Plan, error) {
 	var plan Plan
 	expanded := os.ExpandEnv(string(data))
+	if os.Getenv("LOG_LEVEL") == "DEBUG" {
+		fmt.Println("expanded plan\n", expanded)
+	}
 	return plan, yaml.Unmarshal([]byte(expanded), &plan)
 }
 
