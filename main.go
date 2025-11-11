@@ -26,25 +26,34 @@ func setLogLevel() {
 func prompt() {
 	reader := bufio.NewReader(os.Stdin)
 
-	for {
-		fmt.Print("Variable name (leave blank to finish): ")
-		text, err := reader.ReadString('\n')
-		if err != nil {
-			slog.Error("error reading input", "err", err)
-			return
+	fmt.Print("Enter API key ID (TRUSTGRID_API_KEY_ID): ")
+	key, err := reader.ReadString('\n')
+	if err != nil {
+		slog.Error("error reading input", "err", err)
+		return
+	}
+	key = strings.TrimSpace(key)
+	if key == "" {
+		slog.Warn("API key ID is blank")
+	} else {
+		if err := os.Setenv("TRUSTGRID_API_KEY_ID", key); err != nil {
+			slog.Error("error setting TRUSTGRID_API_KEY_ID envvar", "err", err)
 		}
-		text = strings.TrimSpace(text)
-		if text == "" {
-			return
-		}
-		fmt.Print("Value: ")
-		value, err := reader.ReadString('\n')
-		if err != nil {
-			slog.Error("error reading input", "err", err)
-			return
-		}
-		if err := os.Setenv(text, strings.TrimSpace(value)); err != nil {
-			slog.Error("error setting env var", "err", err)
+	}
+
+	fmt.Print("Enter API key secret (TRUSTGRID_API_KEY_SECRET): ")
+	secret, err := reader.ReadString('\n')
+	if err != nil {
+		slog.Error("Unable to read API key secret", "err", err)
+		return
+	}
+
+	secret = strings.TrimSpace(secret)
+	if secret == "" {
+		slog.Warn("API key secret is blank")
+	} else {
+		if err := os.Setenv("TRUSTGRID_API_KEY_SECRET", secret); err != nil {
+			slog.Error("error setting TRUSTGRID_API_KEY_SECRET envvar", "err", err)
 		}
 	}
 }
@@ -54,7 +63,7 @@ func main() {
 
 	dryrun := flag.Bool("dryrun", true, "When set (the default), this will not write to any outputs")
 	planFile := flag.String("plan", "", "Path to the plan YAML file")
-	promptFlag := flag.Bool("prompt", false, "If set, will ask you for variables")
+	promptFlag := flag.Bool("prompt", false, "If set, you'll be prompted for an API key and secret")
 	flag.Parse()
 
 	if *planFile == "" {
