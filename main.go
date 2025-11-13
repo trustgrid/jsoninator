@@ -9,6 +9,7 @@ import (
 	"os"
 	"strings"
 
+	"golang.org/x/term"
 	"trustgrid.io/jsoninator/plan"
 )
 
@@ -42,13 +43,14 @@ func prompt() {
 	}
 
 	fmt.Print("Enter API key secret (TRUSTGRID_API_KEY_SECRET): ")
-	secret, err := reader.ReadString('\n')
+	secretBytes, err := term.ReadPassword(int(os.Stdin.Fd()))
+	fmt.Println()
 	if err != nil {
 		slog.Error("Unable to read API key secret", "err", err)
 		return
 	}
 
-	secret = strings.TrimSpace(secret)
+	secret := strings.TrimSpace(string(secretBytes))
 	if secret == "" {
 		slog.Warn("API key secret is blank")
 	} else {
