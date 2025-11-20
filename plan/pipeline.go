@@ -197,13 +197,12 @@ var templateFuncs = template.FuncMap{
 	"hasSuffix": strings.HasSuffix,
 	"contains":  strings.Contains,
 	"isBlank": func(s string) bool {
-		slog.Error("looking at s: ", "s", s)
 		return strings.TrimSpace(s) == ""
 	},
-	"isSet": IsSet,
+	"isSet": isSet,
 }
 
-func IsSet(c any, key any) (bool, error) {
+func isSet(c any, key any) (bool, error) {
 	av := reflect.ValueOf(c)
 	kv := reflect.ValueOf(key)
 
