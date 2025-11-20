@@ -6,9 +6,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"reflect"
 	"strings"
 	"text/template"
 
+	"github.com/spf13/cast"
 	"gopkg.in/yaml.v3"
 )
 
@@ -194,6 +196,35 @@ var templateFuncs = template.FuncMap{
 	"hasPrefix": strings.HasPrefix,
 	"hasSuffix": strings.HasSuffix,
 	"contains":  strings.Contains,
+	"isBlank": func(s string) bool {
+		slog.Error("looking at s: ", "s", s)
+		return strings.TrimSpace(s) == ""
+	},
+	"isSet": IsSet,
+}
+
+func IsSet(c any, key any) (bool, error) {
+	av := reflect.ValueOf(c)
+	kv := reflect.ValueOf(key)
+
+	switch av.Kind() {
+	case reflect.Array, reflect.Chan, reflect.Slice:
+		k, err := cast.ToIntE(key)
+		if err != nil {
+			return false, fmt.Errorf("isset unable to use key of type %T as index", key)
+		}
+		if av.Len() > k {
+			return true, nil
+		}
+	case reflect.Map:
+		if kv.Type() == av.Type().Key() {
+			return av.MapIndex(kv).IsValid(), nil
+		}
+	default:
+		slog.Warn("calling IsSet with unsupported type - will always return false", "key", key, "object", c)
+	}
+
+	return false, nil
 }
 
 // Filter conditionally allows messages to continue through the pipeline based on

@@ -117,9 +117,9 @@ func Test_Pipeline(t *testing.T) {
 
 	t.Run("filter", func(t *testing.T) {
 		inputs := []map[string]any{
-			{"name": "bamboozle", "protocol": "tcp", "port": 80, "city": "Los Angeles"},
+			{"name": "bamboozle", "protocol": "tcp", "port": 80, "city": "Los Angeles", "extra": map[string]any{"foo": "bar"}},
 			{"name": "bambi", "protocol": "udp", "port": 53, "city": "Boise"},
-			{"name": "fizboozle", "protocol": "udp", "port": 123, "city": "Los Alamos"},
+			{"name": "fizboozle", "protocol": "udp", "port": 123, "city": "Los Alamos", "extra": map[string]any{"foo": ""}},
 		}
 
 		t.Run("suffix", func(t *testing.T) {
@@ -218,6 +218,26 @@ func Test_Pipeline(t *testing.T) {
 							require.Equal(t, input["port"], res["port"])
 						} else {
 							require.Nil(t, output)
+						}
+					})
+				}
+			})
+
+			t.Run("isBlank", func(t *testing.T) {
+				processor := Filter{
+					Query: `{{if or (not (isSet . "extra")) (isBlank .extra.foo)}}true{{end}}`,
+				}
+
+				for _, input := range inputs {
+					t.Run("filtering "+fmt.Sprint(input), func(t *testing.T) {
+						ctx, cancel := WithReporter(t.Context(), "test")
+						defer cancel()
+						output, err := processor.Process(ctx, input)
+						require.NoError(t, err)
+						if input["extra"] != nil && input["extra"].(map[string]any)["foo"] != "" {
+							require.Nil(t, output, "expected nil output because extra.foo was", input["extra"].(map[string]any)["foo"])
+						} else {
+							require.NotNil(t, output, "expected not nil output because extra.foo was nil or empty")
 						}
 					})
 				}
