@@ -6,9 +6,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"reflect"
 	"strings"
 	"text/template"
 
+	"github.com/spf13/cast"
 	"gopkg.in/yaml.v3"
 )
 
@@ -194,6 +196,61 @@ var templateFuncs = template.FuncMap{
 	"hasPrefix": strings.HasPrefix,
 	"hasSuffix": strings.HasSuffix,
 	"contains":  strings.Contains,
+	"isBlank": func(s string) bool {
+		return strings.TrimSpace(s) == ""
+	},
+	"isSet":   isSet,
+	"toUpper": strings.ToUpper,
+	"toLower": strings.ToLower,
+	"hasTag": func(obj map[string]any, key string, value string) bool {
+		log := slog.With("uid", obj["uid"], "name", obj["name"])
+
+		tagsRaw, ok := obj["tags"]
+		if !ok {
+			log.Debug("no tags")
+			return false
+		}
+		tags, ok := tagsRaw.(map[string]any)
+		if !ok {
+			log.Debug("tags wasn't a map", "tags", tags)
+			return false
+		}
+		v, ok := tags[key]
+		if !ok {
+			log.Debug("key not found", "tags", tags, "key", key)
+			return false
+		}
+		s, ok := v.(string)
+		if !ok {
+			log.Debug("val not a string", "tags", tags, "key", key, "val", v)
+			return false
+		}
+		return strings.EqualFold(s, value)
+	},
+}
+
+func isSet(c any, key any) (bool, error) {
+	av := reflect.ValueOf(c)
+	kv := reflect.ValueOf(key)
+
+	switch av.Kind() {
+	case reflect.Array, reflect.Chan, reflect.Slice:
+		k, err := cast.ToIntE(key)
+		if err != nil {
+			return false, fmt.Errorf("isset unable to use key of type %T as index", key)
+		}
+		if av.Len() > k {
+			return true, nil
+		}
+	case reflect.Map:
+		if kv.Type() == av.Type().Key() {
+			return av.MapIndex(kv).IsValid(), nil
+		}
+	default:
+		slog.Warn("calling IsSet with unsupported type - will always return false", "key", key, "object", c)
+	}
+
+	return false, nil
 }
 
 // Filter conditionally allows messages to continue through the pipeline based on

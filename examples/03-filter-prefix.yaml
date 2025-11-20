@@ -1,0 +1,23 @@
+# Filter with Prefix Example
+#
+# This example demonstrates filtering data based on field prefixes.
+# Only items matching ALL prefix conditions will pass through.
+#
+# Usage:
+#   jsoninator -plan=examples/03-filter-prefix.yaml
+
+input:
+  raw: |
+    [
+      {"name": "gw-austin", "city": "Austin", "type": "gateway"},
+      {"name": "gw-boston", "city": "Boston", "type": "gateway"},
+      {"name": "node-chicago", "city": "Chicago", "type": "node"},
+      {"name": "gw-denver", "city": "Denver", "type": "gateway"}
+    ]
+
+pipeline:
+  processors:
+    - filter:
+        prefix:
+          name: gw-
+          # Only items with names starting with "gw-" will pass through

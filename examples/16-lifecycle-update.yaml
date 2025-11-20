@@ -1,0 +1,46 @@
+# Complete Workflow Example
+#
+# This is a comprehensive example showing a full ETL workflow:
+# - Extract: Fetch data from an API
+# - Transform: Filter, map, and modify data
+# - Load: Send results to another API
+#
+# This mirrors the real-world use case from the README.
+#
+# Usage:
+#   export TRUSTGRID_API_KEY_ID="your_key_id"
+#   export TRUSTGRID_API_KEY_SECRET="your_secret"
+#   jsoninator -plan=examples/15-complete-workflow.yaml -dryrun=false
+
+input:
+  http:
+    url: https://api.dev.trustgrid.io/node?projection[0]=uid&projection[1]=name&projection[2]=tags&projection[3]=lifecycleState
+    headers:
+      Authorization: "trustgrid-token ${TRUSTGRID_API_KEY_ID}:${TRUSTGRID_API_KEY_SECRET}"
+      Accept: application/json
+
+pipeline:
+  processors:
+    # Step 1: Filter to only Node types with names starting with "gw-"
+    - filter:
+        query: |
+          {{if (hasTag . "prod_status" "production")}}true{{else}}false{{end}}
+
+    - filter:
+        query: |
+          {{if ne .lifecycleState "production"}}true{{else}}false{{end}}
+
+    # Step 3: Transform gateway settings
+    - replace:
+        template:
+          lifecycleState: production
+
+output:
+  http:
+    # Use .uid from the original message to target the correct node
+    url: https://api.dev.trustgrid.io/v2/node/{{.uid}}/lifecycle-state
+    method: PUT
+    status_codes: [200]
+    headers:
+      Authorization: "trustgrid-token ${TRUSTGRID_API_KEY_ID}:${TRUSTGRID_API_KEY_SECRET}"
+      Content-Type: application/json

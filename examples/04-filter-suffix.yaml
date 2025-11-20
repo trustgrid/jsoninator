@@ -1,0 +1,24 @@
+# Filter with Suffix Example
+#
+# This example demonstrates filtering data based on field suffixes.
+# Only items matching ALL suffix conditions will pass through.
+#
+# Usage:
+#   jsoninator -plan=examples/04-filter-suffix.yaml
+
+input:
+  raw: |
+    [
+      {"name": "server-prod", "company": "Acme LLC", "active": true},
+      {"name": "server-dev", "company": "Beta Corp", "active": true},
+      {"name": "database-prod", "company": "Acme LLC", "active": true},
+      {"name": "cache-prod", "company": "Gamma LLC", "active": false}
+    ]
+
+pipeline:
+  processors:
+    - filter:
+        suffix:
+          name: -prod
+          company: LLC
+          # Only items ending with "-prod" AND "LLC" will pass through

@@ -1,0 +1,35 @@
+# Map (Field Selection) Example
+#
+# This example demonstrates using map to extract a specific field
+# from objects. Subsequent processors work with the extracted data.
+#
+# Usage:
+#   jsoninator -plan=examples/08-map-basic.yaml
+
+input:
+  raw: |
+    [
+      {
+        "name": "Alice",
+        "location": {
+          "city": "Austin",
+          "state": "Texas",
+          "zip": "78701"
+        }
+      },
+      {
+        "name": "Bob",
+        "location": {
+          "city": "Boston",
+          "state": "Massachusetts",
+          "zip": "02101"
+        }
+      }
+    ]
+
+pipeline:
+  processors:
+    - map:
+        field: location
+        # Extract only the location object from each item
+        # Output will be location objects only

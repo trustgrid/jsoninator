@@ -1,0 +1,25 @@
+# Transform (Modify Fields) Example
+#
+# This example demonstrates using transform to modify, add, or remove
+# fields from objects. Use templates to compute new values dynamically.
+#
+# Usage:
+#   jsoninator -plan=examples/10-transform-basic.yaml
+
+input:
+  raw: |
+    [
+      {"name": "Alice", "age": 30, "status": "active"},
+      {"name": "Bob", "age": 70, "status": "active"},
+      {"name": "Charlie", "age": 45, "status": "inactive"}
+    ]
+
+pipeline:
+  processors:
+    - transform:
+        fields:
+          retired: |
+            {{if gt .age 65.0}}true{{else}}false{{end}}
+          status: active
+          # Add a "retired" field based on age
+          # Force status to always be "active"

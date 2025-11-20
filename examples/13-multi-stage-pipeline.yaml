@@ -1,0 +1,36 @@
+# Multi-Stage Pipeline Example
+#
+# This example demonstrates chaining multiple processors together
+# to perform complex transformations in stages.
+#
+# Usage:
+#   jsoninator -plan=examples/13-multi-stage-pipeline.yaml
+
+input:
+  raw: |
+    [
+      {"name": "gw-austin", "age": 30, "config": {"enabled": true, "port": 8080}},
+      {"name": "gw-boston", "age": 70, "config": {"enabled": true, "port": 8443}},
+      {"name": "node-chicago", "age": 45, "config": {"enabled": false, "port": 8080}},
+      {"name": "gw-denver", "age": 65, "config": {"enabled": true}}
+    ]
+
+pipeline:
+  processors:
+    # Stage 1: Filter to only gateways
+    - filter:
+        prefix:
+          name: gw-
+
+    # Stage 2: Extract the config object
+    - map:
+        field: config
+
+    # Stage 3: Add/modify fields
+    - transform:
+        fields:
+          enabled: true
+          port: |
+            {{if .port}}{{.port}}{{else}}8080{{end}}
+          secured: |
+            {{if and (isSet . "port") (gt .port 8000.0)}}true{{else}}false{{end}}

@@ -1,0 +1,37 @@
+# Transform with Default Values and Deletion Example
+#
+# This example shows advanced transform usage:
+# - Setting default values when fields are missing
+# - Deleting fields by returning "nil"
+# - Conditional field values
+#
+# Usage:
+#   jsoninator -plan=examples/11-transform-defaults.yaml
+
+input:
+  raw: |
+    [
+      {
+        "alwaysOverwrite": "something",
+        "deleted": "keep this",
+        "defaultValue": "custom value"
+      },
+      {
+        "deleted": "deleteme"
+      }
+    ]
+
+pipeline:
+  processors:
+    - transform:
+        fields:
+          alwaysOverwrite: this value is always overwritten
+          deleted: |
+            {{if eq .deleted "deleteme"}}nil{{else}}{{.deleted}}{{end}}
+          defaultValue: |
+            {{if .defaultValue}}
+              {{.defaultValue}}
+            {{else}}
+              default value
+            {{end}}
+          # Fields that evaluate to "nil" are removed from output

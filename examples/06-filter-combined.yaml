@@ -1,0 +1,25 @@
+# Combined Filter Example
+#
+# This example shows how to use multiple filter conditions together.
+# Items must match prefix AND query conditions to pass through.
+#
+# Usage:
+#   jsoninator -plan=examples/06-filter-combined.yaml
+
+input:
+  raw: |
+    [
+      {"name": "gw-austin", "protocol": "tcp", "port": 80},
+      {"name": "gw-boston", "protocol": "udp", "port": 53},
+      {"name": "node-chicago", "protocol": "udp", "port": 123},
+      {"name": "gw-denver", "protocol": "tcp", "port": 443}
+    ]
+
+pipeline:
+  processors:
+    - filter:
+        prefix:
+          name: gw-
+        query: |
+          {{if eq .protocol "udp"}}true{{else}}false{{end}}
+        # Only items starting with "gw-" AND using UDP will pass through

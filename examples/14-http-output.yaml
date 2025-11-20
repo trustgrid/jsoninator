@@ -1,0 +1,35 @@
+# HTTP Output Example
+#
+# This example demonstrates sending processed data to an HTTP endpoint.
+# The URL supports templates to use data from the ORIGINAL message.
+#
+# Usage:
+#   export API_TOKEN="your_token"
+#   jsoninator -plan=examples/14-http-output.yaml -dryrun=false
+
+input:
+  raw: |
+    [
+      {"uid": "node-001", "name": "Server 1", "config": {"port": 8080}},
+      {"uid": "node-002", "name": "Server 2", "config": {"port": 8443}}
+    ]
+
+pipeline:
+  processors:
+    - map:
+        field: config
+    - transform:
+        fields:
+          enabled: true
+          port: |
+            {{if .port}}{{.port}}{{else}}8080{{end}}
+
+output:
+  http:
+    # Template can reference original message fields like .uid
+    url: https://api.example.com/nodes/{{.uid}}/config
+    method: PUT
+    status_codes: [200, 201]
+    headers:
+      Authorization: "Bearer ${API_TOKEN}"
+      Content-Type: application/json
