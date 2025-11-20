@@ -1,0 +1,54 @@
+# Complete Workflow Example
+#
+# This is a comprehensive example showing a full ETL workflow:
+# - Extract: Fetch data from an API
+# - Transform: Filter, map, and modify data
+# - Load: Send results to another API
+#
+# This mirrors the real-world use case from the README.
+#
+# Usage:
+#   export TRUSTGRID_API_KEY_ID="your_key_id"
+#   export TRUSTGRID_API_KEY_SECRET="your_secret"
+#   jsoninator -plan=examples/15-complete-workflow.yaml -dryrun=false
+
+input:
+  http:
+    url: https://portal.trustgrid.io/api/node?projection[0]=uid&projection[1]=name&projection[2]=tags&projection[3][0]=config&projection[3][1]=gateway&projection[4]=fqdn
+    headers:
+      Authorization: "trustgrid-token ${TRUSTGRID_API_KEY_ID}:${TRUSTGRID_API_KEY_SECRET}"
+      Accept: application/json
+
+pipeline:
+  processors:
+    # Step 1: Filter to only Node types with names starting with "gw-"
+    - filter:
+        prefix:
+          name: gw-
+        query: |
+          {{if eq .type "Node"}}true{{else}}false{{end}}
+
+    # Step 2: Extract the gateway configuration
+    - map:
+        field: config.gateway
+
+    # Step 3: Transform gateway settings
+    - transform:
+        fields:
+          udpEnabled: true
+          udpPort: |
+            {{if .udpPort}}{{.udpPort}}{{else if .port}}{{.port}}{{else}}8995{{end}}
+          maxClientWriteMbps: |
+            {{if or (eq .maxClientWriteMbps 0.0) (not .maxClientWriteMbps)}}nil{{else}}{{.maxClientWriteMbps}}{{end}}
+          cert: |
+            {{if .cert}}{{.cert}}{{else}}nil{{end}}
+
+output:
+  http:
+    # Use .uid from the original message to target the correct node
+    url: https://portal.trustgrid.io/api/node/{{.uid}}/config/gateway
+    method: PUT
+    status_codes: [200]
+    headers:
+      Authorization: "trustgrid-token ${TRUSTGRID_API_KEY_ID}:${TRUSTGRID_API_KEY_SECRET}"
+      Content-Type: application/json

@@ -1,0 +1,26 @@
+# Filter with isBlank and isSet Helpers Example
+#
+# This example demonstrates using the isSet and isBlank helper functions
+# in filter queries to handle missing or empty fields.
+#
+# isSet: checks if a field exists in the object
+# isBlank: checks if a field is an empty string
+#
+# Usage:
+#   jsoninator -plan=examples/07-filter-isblank-isset.yaml
+
+input:
+  raw: |
+    [
+      {"name": "server1", "description": "Main server", "tag": "production"},
+      {"name": "server2", "description": "", "tag": ""},
+      {"name": "server3", "tag": "staging"},
+      {"name": "server4", "description": "Backup server"}
+    ]
+
+pipeline:
+  processors:
+    - filter:
+        query: |
+          {{if or (not (isSet . "description")) (isBlank .description)}}true{{end}}
+        # Only items without a description or with blank description pass through

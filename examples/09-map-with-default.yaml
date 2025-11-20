@@ -1,0 +1,31 @@
+# Map with Default Value Example
+#
+# This example shows how to provide a default value when
+# the specified field is missing from an object.
+#
+# Usage:
+#   jsoninator -plan=examples/09-map-with-default.yaml
+
+input:
+  raw: |
+    [
+      {
+        "name": "Houstonian",
+        "location": {
+          "city": "Houston",
+          "state": "Texas"
+        }
+      },
+      {
+        "name": "Austinite"
+      }
+    ]
+
+pipeline:
+  processors:
+    - map:
+        field: location
+        default:
+          city: Austin
+          state: Texas
+        # If location is missing, use the default Austin location

@@ -199,7 +199,34 @@ var templateFuncs = template.FuncMap{
 	"isBlank": func(s string) bool {
 		return strings.TrimSpace(s) == ""
 	},
-	"isSet": isSet,
+	"isSet":   isSet,
+	"toUpper": strings.ToUpper,
+	"toLower": strings.ToLower,
+	"hasTag": func(obj map[string]any, key string, value string) bool {
+		log := slog.With("uid", obj["uid"], "name", obj["name"])
+
+		tagsRaw, ok := obj["tags"]
+		if !ok {
+			log.Debug("no tags")
+			return false
+		}
+		tags, ok := tagsRaw.(map[string]any)
+		if !ok {
+			log.Debug("tags wasn't a map", "tags", tags)
+			return false
+		}
+		v, ok := tags[key]
+		if !ok {
+			log.Debug("key not found", "tags", tags, "key", key)
+			return false
+		}
+		s, ok := v.(string)
+		if !ok {
+			log.Debug("val not a string", "tags", tags, "key", key, "val", v)
+			return false
+		}
+		return strings.EqualFold(s, value)
+	},
 }
 
 func isSet(c any, key any) (bool, error) {

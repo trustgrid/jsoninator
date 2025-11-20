@@ -1,0 +1,25 @@
+# Filter with Query (Template) Example
+#
+# This example demonstrates filtering using Go template expressions.
+# The query must evaluate to "true" for items to pass through.
+#
+# Note: All numbers are treated as floats in templates, so use .0 (e.g., 65.0)
+#
+# Usage:
+#   jsoninator -plan=examples/05-filter-query.yaml
+
+input:
+  raw: |
+    [
+      {"name": "Alice", "age": 30, "status": "active"},
+      {"name": "Bob", "age": 70, "status": "active"},
+      {"name": "Charlie", "age": 68, "status": "retired"},
+      {"name": "Diana", "age": 25, "status": "active"}
+    ]
+
+pipeline:
+  processors:
+    - filter:
+        query: |
+          {{if gt .age 65.0}}true{{else}}false{{end}}
+        # Only people older than 65 will pass through

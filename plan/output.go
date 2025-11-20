@@ -65,6 +65,7 @@ func (o Output) publishHTTP(ctx context.Context, original, processed Message) er
 
 // Publish sends the processed message to all configured output methods.
 func (o Output) Publish(ctx context.Context, original, processed Message) error {
+	slog.Debug("sending processed msg", "processed", processed)
 	if o.HTTP.URL != "" {
 		if err := o.publishHTTP(ctx, original, processed); err != nil {
 			return err

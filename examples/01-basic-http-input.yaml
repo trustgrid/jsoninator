@@ -1,0 +1,20 @@
+# Basic HTTP Input Example
+#
+# This example demonstrates how to fetch JSON data from an HTTP endpoint
+# with custom headers, including authentication using environment variables.
+#
+# Usage:
+#   export TRUSTGRID_API_KEY_ID="your_key_id"
+#   export TRUSTGRID_API_KEY_SECRET="your_secret"
+#   jsoninator -plan=examples/01-basic-http-input.yaml
+
+input:
+  http:
+    url: https://api.dev.trustgrid.io/node
+    headers:
+      Authorization: "trustgrid-token ${TRUSTGRID_API_KEY_ID}:${TRUSTGRID_API_KEY_SECRET}"
+      Accept: application/json
+
+    
+output:
+  # In this example, we're just seeing what devices would be processed.

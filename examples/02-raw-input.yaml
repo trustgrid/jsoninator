@@ -1,0 +1,16 @@
+# Raw Input Example
+#
+# This example shows how to use inline JSON data as input.
+# Useful for testing pipelines or working with static data.
+#
+# Usage:
+#   jsoninator -plan=examples/02-raw-input.yaml
+
+input:
+  raw: |
+    [
+      {"name": "Alice", "age": 30, "city": "Austin", "department": "Engineering"},
+      {"name": "Bob", "age": 45, "city": "Boston", "department": "Sales"},
+      {"name": "Charlie", "age": 70, "city": "Chicago", "department": "Retired"},
+      {"name": "Diana", "age": 28, "city": "Denver", "department": "Marketing"}
+    ]

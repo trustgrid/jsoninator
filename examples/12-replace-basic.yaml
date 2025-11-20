@@ -1,0 +1,27 @@
+# Replace (Create New Object) Example
+#
+# This example demonstrates using replace to create entirely new
+# objects with only the fields you specify. Original data is available
+# in templates but not automatically passed through.
+#
+# Usage:
+#   jsoninator -plan=examples/12-replace-basic.yaml
+
+input:
+  raw: |
+    [
+      {"name": "Alice", "age": 30, "department": "Engineering", "salary": 100000},
+      {"name": "Bob", "age": 70, "department": "Sales", "salary": 80000},
+      {"name": "Charlie", "age": 45, "department": "Marketing", "salary": 90000}
+    ]
+
+pipeline:
+  processors:
+    - replace:
+        template:
+          retired: |
+            {{if gt .age 65.0}}true{{else}}false{{end}}
+          employee: "{{.name}}"
+          another: true
+          number: 123
+          # Output will ONLY contain these four fields
