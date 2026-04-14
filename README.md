@@ -5,7 +5,29 @@ jsoninator is a tool that reads JSON from an input, runs the JSON through differ
 
 Currently input sources are limited to HTTP and plaintext. Output destinations are limited to HTTP.
 
-Input, processors, and outputs are managed in a plan YAML file. 
+Input, processors, and outputs are managed in a plan YAML file.
+
+## Building
+
+```bash
+go build -o bin/jsoninator main.go
+```
+
+Or with the Makefile:
+
+```bash
+make build
+```
+
+Pre-built binaries are available on the [GitHub Releases](../../releases) page for macOS, Linux, and Windows.
+
+## Running Tests
+
+```bash
+make test
+# or
+go test -race -v -timeout 20s ./...
+```
 
 Below is a plan YAML that would update all appliances who have a name that start with "gw-" to have UDP enabled, ensuring the UDP port is set and that invalid values for `cert` and `clientMaxEgressMbps` are omitted:
 
