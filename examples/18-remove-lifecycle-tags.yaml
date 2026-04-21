@@ -1,0 +1,46 @@
+# Remove prod_status / ProdStatus Tag After Lifecycle Migration
+#
+# Once lifecycleState has been set (see 17-lifecycle-from-tag.yaml) and
+# alarm filters have been updated to use lifecycleState, use this plan to
+# clean up the legacy tag.
+#
+# Run this plan ONCE PER TAG NAME. Set LIFECYCLE_TAG_NAME to the tag you
+# want to remove, then run again for the other tag name if needed.
+#
+# Example:
+#   export TRUSTGRID_API_KEY_ID="your_key_id"
+#   export TRUSTGRID_API_KEY_SECRET="your_secret"
+#
+#   # Remove the "prod_status" tag
+#   LIFECYCLE_TAG_NAME=prod_status \
+#     jsoninator -plan=examples/18-remove-lifecycle-tags.yaml -dryrun=false
+#
+#   # Remove the "ProdStatus" tag
+#   LIFECYCLE_TAG_NAME=ProdStatus \
+#     jsoninator -plan=examples/18-remove-lifecycle-tags.yaml -dryrun=false
+
+input:
+  http:
+    url: https://portal.trustgrid.io/node?projection[0]=uid&projection[1]=name&projection[2]=tags&projection[3]=lifecycleState
+    headers:
+      Authorization: "trustgrid-token ${TRUSTGRID_API_KEY_ID}:${TRUSTGRID_API_KEY_SECRET}"
+      Accept: application/json
+
+pipeline:
+  processors:
+    # Keep only nodes that have lifecycleState set (migration complete)
+    # AND still carry the legacy tag we want to remove.
+    - filter:
+        query: |
+          {{if not .lifecycleState}}false{{else}}true{{end}}
+    - filter:
+        query: |
+          {{if isSet .tags "${LIFECYCLE_TAG_NAME}"}}true{{else}}false{{end}}
+
+output:
+  http:
+    url: https://portal.trustgrid.io/node/{{.uid}}/tag/${LIFECYCLE_TAG_NAME}
+    method: DELETE
+    status_codes: [200, 204]
+    headers:
+      Authorization: "trustgrid-token ${TRUSTGRID_API_KEY_ID}:${TRUSTGRID_API_KEY_SECRET}"
