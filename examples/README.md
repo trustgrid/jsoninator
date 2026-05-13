@@ -58,6 +58,12 @@ Full ETL workflow: fetch from API, transform data, send to API.
 ### 16-lifecycle-update.yaml
 Shows how to set the lifecycleStatus on devices based on their prod_status tag, and uses the `hasTag` helper.
 
+### 17-lifecycle-from-tag.yaml
+Migrates `prod_status` / `ProdStatus` tags to the lifecycleState attribute, demonstrating how to match multiple tag names and spelling variants (e.g. "pre-production" vs "preproduction") with chained `or` / `hasTag` calls.
+
+### 18-remove-lifecycle-tags.yaml
+Removes the legacy `prod_status` or `ProdStatus` tag from nodes whose lifecycleState is already set. Run once per tag name via the `LIFECYCLE_TAG_NAME` environment variable. Execute this plan **after** updating alarm filters to use lifecycleState.
+
 ## Running Examples
 
 All examples can be run with:

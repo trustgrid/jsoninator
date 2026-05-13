@@ -1,0 +1,64 @@
+# Set Lifecycle State from prod_status / ProdStatus Tag
+#
+# Many customers track production status via a node tag named either
+# "prod_status" or "ProdStatus". This plan migrates that data to the
+# first-class lifecycleState attribute.
+#
+# The filter demonstrates matching multiple tag names AND multiple values
+# for the same logical state (e.g. "Preproduction" and "Pre-production"
+# are both common spellings). hasTag() is case-insensitive, so "prod" and
+# "Prod" are handled automatically.
+#
+# Run this plan BEFORE removing the tags so that alarm filters can be
+# updated between the two operations.
+#
+# Supported mappings (extend the or conditions as needed):
+#   production    <- prod_status/ProdStatus = "production" | "prod"
+#   preproduction <- prod_status/ProdStatus = "preproduction" | "pre-production" | "preprod"
+#
+# Usage:
+#   export TRUSTGRID_API_KEY_ID="your_key_id"
+#   export TRUSTGRID_API_KEY_SECRET="your_secret"
+#   jsoninator -plan=examples/17-lifecycle-from-tag.yaml -dryrun=false
+
+input:
+  http:
+    url: https://portal.trustgrid.io/node?projection[0]=uid&projection[1]=name&projection[2]=tags&projection[3]=lifecycleState
+    headers:
+      Authorization: "trustgrid-token ${TRUSTGRID_API_KEY_ID}:${TRUSTGRID_API_KEY_SECRET}"
+      Accept: application/json
+
+pipeline:
+  processors:
+    # Keep only nodes whose tag value maps to a known lifecycle state.
+    # Using `or` chains multiple hasTag() calls to match both tag names
+    # and spelling variants in a single expression.
+    - filter:
+        query: |
+          {{if or
+            (hasTag . "prod_status" "production") (hasTag . "prod_status" "prod")
+            (hasTag . "ProdStatus"  "production") (hasTag . "ProdStatus"  "prod")
+            (hasTag . "prod_status" "preproduction") (hasTag . "prod_status" "pre-production") (hasTag . "prod_status" "preprod")
+            (hasTag . "ProdStatus"  "preproduction") (hasTag . "ProdStatus"  "pre-production") (hasTag . "ProdStatus"  "preprod")
+          }}true{{else}}false{{end}}
+
+    # Skip nodes whose lifecycleState is already set to one of our target values
+    # so they don't generate spurious change records.
+    - filter:
+        query: |
+          {{if or (eq .lifecycleState "production") (eq .lifecycleState "preproduction")}}false{{else}}true{{end}}
+
+    # Derive the target lifecycleState from whichever tag value matched.
+    - replace:
+        template:
+          lifecycleState: |
+            {{if or (hasTag . "prod_status" "production") (hasTag . "prod_status" "prod") (hasTag . "ProdStatus" "production") (hasTag . "ProdStatus" "prod")}}production{{else}}preproduction{{end}}
+
+output:
+  http:
+    url: https://portal.trustgrid.io/v2/node/{{.uid}}/lifecycle-state
+    method: PUT
+    status_codes: [200]
+    headers:
+      Authorization: "trustgrid-token ${TRUSTGRID_API_KEY_ID}:${TRUSTGRID_API_KEY_SECRET}"
+      Content-Type: application/json
